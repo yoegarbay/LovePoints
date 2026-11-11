@@ -1,0 +1,1 @@
+// api.js (Sprint 1: funciones fetch, una por endpoint)
