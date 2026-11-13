@@ -14,6 +14,7 @@
  * -------------------------------------------------------
  * 1. Al cargar cualquier página: GET check_login.php
  *      - Sin sesión            -> redirigir a login.php
+ *                                 (en login y registro no: ya estás ahí)
  *      - Sesión sin pareja     -> redirigir a vincular.php
  *      - Sesión con pareja     -> continuar en app.php
  * 2. state.cargarDatos() rellena el estado:
@@ -21,6 +22,10 @@
  * 3. Cualquier acción del usuario (filtrar, crear, anular...)
  *      modifica el estado y llama a la función que repinta
  *      la parte afectada de la interfaz.
+ *      - Filtros: los aplica el BE (eventos_list.php recibe
+ *        usuario, efecto, desde, hasta, nombre y anulado).
+ *        El filtro «mes» se convierte en desde/hasta.
+ *      - Ordenación (fecha, coste, persona): la hace el FE.
  * 4. Los saldos y estadísticas NUNCA se calculan en el
  *      front: se piden siempre al BE (saldos.php, stats.php).
  * 5. Freya (asistente): todo mensaje al usuario (errores de
@@ -28,7 +33,7 @@
  *      Mensajes recientes: sessionStorage. Preferencias (oculta,
  *      posición): localStorage. Nunca datos de eventos o importes.
  *      - En formularios habla sola al enfocar un campo.
- *      - En el resto de la app, solo si el usuario la pide.
+ *      - En el resto de la app, solo si el usuario pulsa «?».
  * =======================================================*/
 
 
@@ -55,15 +60,17 @@ class LoveState {
          */
         this.saldos = [];
 
-        /** @type {Array<Object>} Eventos cargados (incluye anulados; se filtran al mostrar). */
+        /** @type {Array<Object>} Eventos que devuelve eventos_list.php con los filtros activos. */
         this.eventos = [];
 
         /** @type {Array<Object>} Eventos predefinidos del usuario. */
         this.predefinidos = [];
 
         /**
-         * Filtros activos de la tabla de eventos.
+         * Filtros activos de la tabla de eventos (se envían a eventos_list.php).
+         * persona: se envía como «usuario».
          * efecto: '' | 'resta' | 'suma'   (valores del contrato con el BE)
+         * mes: se convierte en desde/hasta antes de enviarlo.
          * anulados: true = mostrar también los anulados.
          */
         this.filtros = { persona: '', efecto: '', desde: '', hasta: '', mes: '', nombre: '', anulados: false };
@@ -98,7 +105,7 @@ class LoveState {
     /** TODO(Sprint 4): pedir los saldos al BE (GET saldos.php) y guardarlos en this.saldos. */
     actualizarSaldos() { }
 
-    /** TODO(Sprint 4): devolver los eventos que cumplen this.filtros (GET eventos_list.php). */
+    /** TODO(Sprint 4): pedir al BE los eventos que cumplen this.filtros (GET eventos_list.php). */
     filtrarEventos() { }
 
     /** TODO(Sprint 5): dibujar las gráficas con Chart.js según this.granularidad (GET stats.php). */
