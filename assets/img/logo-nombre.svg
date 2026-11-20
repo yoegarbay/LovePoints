@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="170" height="44" viewBox="0 0 170 44" role="img" aria-labelledby="nombre-titulo">
+  <title id="nombre-titulo">LovePoints</title>
+
+  <!-- Nombre (fuentes del sistema) -->
+  <text x="2" y="32" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="30" font-weight="700" fill="#24213A"><tspan fill="#7254D1">Love</tspan>Points</text>
+</svg>
