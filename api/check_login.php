@@ -13,8 +13,8 @@ if (isset($_SESSION['usuario_id'])) {
     $stmt->execute(['id' => $uid]);
     $tiene_pareja = $stmt->fetch() ? true : false;
     
-    echo json_encode(["session" => true, "tiene_pareja" => $tiene_pareja]);
+    echo json_encode(["ok" => true, "sesion" => true, "tiene_pareja" => $tiene_pareja]);
 } else {
-    echo json_encode(["session" => false, "tiene_pareja" => false]);
+    echo json_encode(["ok" => true, "sesion" => false, "tiene_pareja" => false]);
 }
 ?>
