@@ -2,7 +2,7 @@
  * style.css
  * -------------------------------------------------------
  * Propósito : Estilos de LovePoints (mobile-first).
- * Sprint    : 1 (vacío) -> 2 (paleta, tipografía, estilos base)
+ * Sprint    : 2 (paleta, tipografía, base) -> 3, 4 y 5 (páginas)
  * Se usa en : todas las páginas. La landing (index.php) la
  *             maqueta el SM con este mismo archivo.
  * Paleta    : 2 «Lavanda y rosa». Fuentes del sistema.
@@ -10,7 +10,7 @@
  *             px para bordes, sombras y esquinas.
  * =======================================================*/
 
-/* ===== VARIABLES (Sprint 2: paleta, tipografía, espaciados) ===== */
+/* ===== VARIABLES (paleta, tipografía, espaciados) ===== */
 
 :root {
   /* Colores */
@@ -68,6 +68,7 @@ body {
   line-height: 1.5;
   background: var(--color-fondo);
   color: var(--color-texto);
+  padding-bottom: 5rem; /* hueco para que Freya no tape el final */
 }
 
 h1,
@@ -118,13 +119,14 @@ img {
   white-space: nowrap;
 }
 
-/* ===== COMPONENTES (botones, formularios, tarjetas, tabla) ===== */
+/* ===== COMPONENTES ===== */
 
 /* --- Cabecera y contenedor --- */
 .cabecera {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--espacio-s);
   padding: 0.75rem var(--espacio-m);
   background: var(--color-superficie);
   border-bottom: 1px solid var(--color-borde);
@@ -138,19 +140,77 @@ img {
   text-decoration: none;
 }
 
+.logo img {
+  height: 1.75rem;
+  width: auto;
+}
+
+.cabecera-usuario {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-s);
+  font-size: var(--texto-s);
+}
+
 .contenedor {
   max-width: 62.5rem;
   margin: 0 auto;
   padding: var(--espacio-m);
 }
 
-/* --- Tarjetas --- */
+/* --- Tarjetas y secciones --- */
 .tarjeta {
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio);
   padding: var(--espacio-m);
   box-shadow: var(--sombra);
+}
+
+.seccion {
+  margin-bottom: var(--espacio-m);
+}
+
+.seccion-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-s);
+  margin-bottom: var(--espacio-s);
+}
+
+.seccion-cabecera h2 {
+  margin: 0;
+}
+
+/* Mensaje cuando una lista está vacía */
+.vacio {
+  text-align: center;
+  color: var(--color-texto-suave);
+  padding: var(--espacio-m);
+}
+
+/* --- Bloques plegables (<details>) para los formularios --- */
+.plegable {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-pequeno);
+  margin-bottom: var(--espacio-m);
+}
+
+.plegable summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-principal);
+  padding: 0.75rem var(--espacio-m);
+  min-height: 2.75rem;
+}
+
+.plegable[open] summary {
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.plegable form {
+  padding: var(--espacio-m);
 }
 
 /* --- Botones --- */
@@ -189,9 +249,21 @@ img {
   color: #fff;
 }
 
+.boton-pequeno {
+  font-size: var(--texto-s);
+  padding: 0.375rem 0.75rem;
+  min-height: 2.25rem;
+}
+
 .boton:focus-visible {
   outline: 3px solid var(--color-secundario);
   outline-offset: 2px;
+}
+
+.botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-s);
 }
 
 /* --- Formularios (campo con error: clase .error en .campo) --- */
@@ -199,7 +271,8 @@ img {
   margin-bottom: 0.875rem;
 }
 
-.campo label {
+.campo label,
+.campo legend {
   display: block;
   font-weight: 500;
   font-size: var(--texto-s);
@@ -241,7 +314,8 @@ img {
   border: 2px solid var(--color-resta);
 }
 
-.campo.error label::after {
+.campo.error label::after,
+.campo.error legend::after {
   content: " !";
   color: var(--color-resta);
   font-weight: 700;
@@ -251,6 +325,73 @@ img {
   color: var(--color-resta);
   font-size: 0.8125rem;
   margin-top: var(--espacio-xs);
+}
+
+/* Casilla (checkbox) con su texto al lado */
+.campo-casilla label {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-s);
+  min-height: 2.75rem;
+  margin: 0;
+}
+
+.campo-casilla input {
+  width: auto;
+}
+
+/* Grupo de opciones (radio): resta / suma */
+.opciones {
+  border: none;
+  padding: 0;
+  margin: 0 0 0.875rem;
+}
+
+.opciones-lista {
+  display: flex;
+  gap: var(--espacio-s);
+}
+
+.opcion {
+  flex: 1;
+}
+
+.opcion input {
+  position: absolute;
+  opacity: 0; /* se oculta el círculo, la etiqueta hace de botón */
+}
+
+.opcion span {
+  display: block;
+  text-align: center;
+  padding: 0.625rem;
+  min-height: 2.75rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-pequeno);
+  background: var(--color-superficie);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.opcion input:checked + span.opcion-resta {
+  background: var(--color-resta-claro);
+  border-color: var(--color-resta);
+  color: var(--color-resta);
+}
+
+.opcion input:checked + span.opcion-suma {
+  background: var(--color-suma-claro);
+  border-color: var(--color-suma);
+  color: var(--color-suma);
+}
+
+.opcion input:focus-visible + span {
+  outline: 3px solid var(--color-secundario);
+  outline-offset: 2px;
+}
+
+.opciones.error .opcion span {
+  border: 2px solid var(--color-resta);
 }
 
 /* --- Campo con botón dentro (contraseña + «Ver») --- */
@@ -283,73 +424,6 @@ img {
   border-radius: var(--radio-pequeno);
 }
 
-/* --- Saldos (los valores los envía el BE) --- */
-.saldos {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-}
-
-.saldo {
-  border-radius: var(--radio);
-  padding: 0.75rem;
-  background: var(--color-principal-claro);
-}
-
-.saldo:nth-child(2) {
-  background: var(--color-secundario-claro);
-}
-
-.saldo-numero {
-  font-family: var(--fuente-titulos);
-  font-size: 1.75rem;
-  font-weight: 800;
-}
-
-/* --- Tabla de eventos --- */
-.tabla-scroll {
-  overflow-x: auto; /* en móvil se desliza en horizontal */
-}
-
-.tabla {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--texto-s);
-}
-
-.tabla th {
-  text-align: left;
-  color: var(--color-texto-suave);
-  font-weight: 500;
-  padding: var(--espacio-s);
-  border-bottom: 1px solid var(--color-borde);
-}
-
-.tabla td {
-  padding: 0.625rem var(--espacio-s);
-  border-bottom: 1px solid var(--color-borde);
-}
-
-.tabla tbody tr:hover {
-  background: var(--color-fondo);
-}
-
-/* --- Etiquetas e importes suma / resta --- */
-.etiqueta {
-  display: inline-block;
-  font-size: var(--texto-xs);
-  font-weight: 600;
-  padding: 0.125rem 0.625rem;
-  border-radius: 999px;
-}
-
-.etiqueta-suma  { background: var(--color-suma-claro);  color: var(--color-suma); }
-.etiqueta-resta { background: var(--color-resta-claro); color: var(--color-resta); }
-
-.importe-suma  { color: var(--color-suma);  font-weight: 600; }
-.importe-resta { color: var(--color-resta); font-weight: 600; }
-
 /* --- Acceso: tarjeta y pestañas login / registro --- */
 .tarjeta-acceso {
   max-width: 25rem;
@@ -363,7 +437,7 @@ img {
 }
 
 .pestana {
-  flex: 1;
+  flex: 1; /* las dos pestañas, mismo ancho */
   text-align: center;
   padding: 0.75rem var(--espacio-s);
   min-height: 2.75rem;
@@ -371,7 +445,7 @@ img {
   color: var(--color-texto-suave);
   text-decoration: none;
   border-bottom: 3px solid transparent;
-  margin-bottom: -1px;
+  margin-bottom: -1px; /* la raya se monta sobre el borde gris */
 }
 
 .pestana[aria-current="page"] {
@@ -397,9 +471,140 @@ img {
   padding: var(--espacio-m);
 }
 
+/* --- Saldos (los valores los envía el BE) --- */
+.saldos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: var(--espacio-m);
+}
+
+.saldo {
+  border-radius: var(--radio);
+  padding: 0.75rem;
+  background: var(--color-principal-claro);
+}
+
+.saldo:nth-child(2) {
+  background: var(--color-secundario-claro);
+}
+
+.saldo-numero {
+  font-family: var(--fuente-titulos);
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+/* --- Filtros de la tabla --- */
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* en móvil, de dos en dos */
+  gap: 0 var(--espacio-s);
+  align-items: end;
+}
+
+/* minmax(0, ...) y min-width: 0 evitan que las fechas se salgan de la columna */
+.filtros input,
+.filtros select {
+  min-width: 0;
+}
+
+.filtros .campo-ancho {
+  grid-column: 1 / -1; /* ocupa toda la fila */
+}
+
+/* --- Tabla de eventos --- */
+.tabla-scroll {
+  position: relative; /* el texto .solo-lector de la tabla no se sale de aquí */
+  overflow-x: auto;   /* en móvil se desliza en horizontal */
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texto-s);
+}
+
+.tabla th {
+  text-align: left;
+  color: var(--color-texto-suave);
+  font-weight: 500;
+  padding: var(--espacio-s);
+  border-bottom: 1px solid var(--color-borde);
+  white-space: nowrap;
+}
+
+.tabla td {
+  padding: 0.625rem var(--espacio-s);
+  border-bottom: 1px solid var(--color-borde);
+  vertical-align: middle;
+}
+
+.tabla tbody tr:hover {
+  background: var(--color-fondo);
+}
+
+.tabla .numero {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.tabla .acciones {
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* Fila anulada: tachada y en gris */
+.tabla tr.anulado td {
+  color: var(--color-texto-suave);
+  text-decoration: line-through;
+}
+
+.tabla tr.anulado td.acciones {
+  text-decoration: none;
+}
+
+/* Botón de cabecera para ordenar */
+.ordenar {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.ordenar:focus-visible {
+  outline: 3px solid var(--color-secundario);
+  outline-offset: 2px;
+}
+
+/* --- Etiquetas e importes suma / resta --- */
+.etiqueta {
+  display: inline-block;
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  padding: 0.125rem 0.625rem;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.etiqueta-suma  { background: var(--color-suma-claro);  color: var(--color-suma); }
+.etiqueta-resta { background: var(--color-resta-claro); color: var(--color-resta); }
+
+.importe-suma  { color: var(--color-suma);  font-weight: 600; }
+.importe-resta { color: var(--color-resta); font-weight: 600; }
+
+/* --- Gráficas --- */
+.grafica {
+  position: relative;
+  height: 16rem; /* Chart.js necesita un alto fijo en el contenedor */
+}
+
 /* ===== FREYA (asistente y burbujas) =====
-   Detalles en docs/FREYA.md.
-   TODO(Sprint 3): estados oculta / movible. */
+   Detalles en docs/FREYA.md. */
 
 #freya {
   position: fixed;
@@ -419,6 +624,38 @@ img {
   filter: drop-shadow(var(--sombra));
 }
 
+/* Botón «?» de Freya (en app y admin) */
+.freya-ayuda {
+  position: relative;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.freya-ayuda::after {
+  content: "?";
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--color-secundario);
+  color: var(--color-texto);
+  font-weight: 800;
+  font-size: var(--texto-xs);
+  line-height: 1.25rem;
+  text-align: center;
+}
+
+.freya-ayuda:focus-visible {
+  outline: 3px solid var(--color-secundario);
+  outline-offset: 2px;
+  border-radius: var(--radio-pequeno);
+}
+
 .freya-burbuja {
   background: var(--color-superficie);
   border: 2px solid var(--color-secundario);
@@ -426,6 +663,7 @@ img {
   padding: 0.625rem 0.875rem;
   font-size: var(--texto-s);
   box-shadow: var(--sombra);
+  margin: 0;
 }
 
 .freya-burbuja strong {
@@ -447,11 +685,6 @@ img {
     font-size: 1.375rem;
   }
 
-  .logo img {
-    height: 1.75rem;
-    width: auto;
-  }
-
   .contenedor {
     padding: var(--espacio-l);
   }
@@ -466,6 +699,26 @@ img {
 
   .saldo-numero {
     font-size: 2rem;
+  }
+
+  /* En escritorio los filtros caben en 4 columnas */
+  .filtros {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* Formularios de la app en dos columnas */
+  .form-columnas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--espacio-m);
+  }
+
+  .form-columnas .campo-ancho {
+    grid-column: 1 / -1;
+  }
+
+  .grafica {
+    height: 20rem;
   }
 
   #freya {
