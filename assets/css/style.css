@@ -253,6 +253,36 @@ img {
   margin-top: var(--espacio-xs);
 }
 
+/* --- Campo con botón dentro (contraseña + «Ver») --- */
+.campo-con-boton {
+  position: relative;
+}
+
+.campo-con-boton input {
+  padding-right: 4rem; /* que el texto no quede debajo del botón */
+}
+
+.boton-ver {
+  position: absolute;
+  right: var(--espacio-xs);
+  top: 50%;
+  transform: translateY(-50%); /* centrado en vertical */
+  min-height: 2.75rem;
+  padding: 0 var(--espacio-s);
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: var(--texto-s);
+  font-weight: 600;
+  color: var(--color-principal);
+  cursor: pointer;
+}
+
+.boton-ver:focus-visible {
+  outline: 3px solid var(--color-secundario);
+  border-radius: var(--radio-pequeno);
+}
+
 /* --- Saldos (los valores los envía el BE) --- */
 .saldos {
   display: grid;
@@ -320,6 +350,53 @@ img {
 .importe-suma  { color: var(--color-suma);  font-weight: 600; }
 .importe-resta { color: var(--color-resta); font-weight: 600; }
 
+/* --- Acceso: tarjeta y pestañas login / registro --- */
+.tarjeta-acceso {
+  max-width: 25rem;
+  margin: var(--espacio-l) auto 0;
+}
+
+.pestanas {
+  display: flex;
+  border-bottom: 1px solid var(--color-borde);
+  margin-bottom: var(--espacio-m);
+}
+
+.pestana {
+  flex: 1;
+  text-align: center;
+  padding: 0.75rem var(--espacio-s);
+  min-height: 2.75rem;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+}
+
+.pestana[aria-current="page"] {
+  color: var(--color-principal);
+  border-bottom-color: var(--color-principal);
+}
+
+.pestana:focus-visible {
+  outline: 3px solid var(--color-secundario);
+  outline-offset: 2px;
+}
+
+/* --- Código personal (vincular) --- */
+.codigo {
+  font-family: var(--fuente-titulos);
+  font-size: var(--texto-xl);
+  font-weight: 800;
+  letter-spacing: 0.15em; /* separa las letras para leerlo mejor */
+  text-align: center;
+  color: var(--color-principal);
+  background: var(--color-principal-claro);
+  border-radius: var(--radio);
+  padding: var(--espacio-m);
+}
+
 /* ===== FREYA (asistente y burbujas) =====
    Detalles en docs/FREYA.md.
    TODO(Sprint 3): estados oculta / movible. */
@@ -337,13 +414,9 @@ img {
 
 .freya-robot {
   width: 3rem;
-  height: 3rem;
+  height: auto;
   flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--color-principal);
-  display: grid;
-  place-items: center;
-  box-shadow: var(--sombra);
+  filter: drop-shadow(var(--sombra));
 }
 
 .freya-burbuja {
@@ -374,6 +447,11 @@ img {
     font-size: 1.375rem;
   }
 
+  .logo img {
+    height: 1.75rem;
+    width: auto;
+  }
+
   .contenedor {
     padding: var(--espacio-l);
   }
@@ -394,10 +472,5 @@ img {
     left: 1.25rem;
     bottom: 1.25rem;
     max-width: 20rem;
-  }
-
-  .freya-robot {
-    width: 3.25rem;
-    height: 3.25rem;
   }
 }

@@ -86,6 +86,10 @@ class LoveState {
          * @type {Array<string>}
          */
         this.mensajesFreya = [];
+        try {
+            const guardados = sessionStorage.getItem('mensajesFreya');
+            if (guardados) this.mensajesFreya = JSON.parse(guardados);
+        } catch (e) { }
     }
 
     // ----- Consultas -----
@@ -111,10 +115,118 @@ class LoveState {
     /** TODO(Sprint 5): dibujar las gráficas con Chart.js según this.granularidad (GET stats.php). */
     renderizarGraficas() { }
 
-    /** TODO(Sprint 3): añadir un mensaje a this.mensajesFreya (máx. 5) y mostrarlo en la burbuja. */
-    decirFreya() { }
-}
+    /**
+     * Freya dice un mensaje y lo muestra en la burbuja.
+     * TODO(Sprint 5): si Freya está oculta, mostrarlo junto al campo.
+     * @param {string} texto Mensaje para el usuario.
+     * @param {boolean} [guardar=true] false para ayudas de campos (no se guardan).
+     */
+    decirFreya(texto, guardar = true) {
+        if (guardar) {
+            this.mensajesFreya.push(texto);
+            if (this.mensajesFreya.length > 5) {
+                this.mensajesFreya.shift();
+            }
+            try {
+                sessionStorage.setItem('mensajesFreya', JSON.stringify(this.mensajesFreya));
+            } catch (e) { }
+        }
 
+        const burbuja = document.querySelector('.freya-burbuja');
+        if (!burbuja) return;
+        burbuja.textContent = texto;
+        burbuja.classList.remove('oculto');
+    }
+}
 
 // ===== INSTANCIA GLOBAL =====
 const state = new LoveState();
+
+
+
+// ===== FORMULARIOS (Sprint 3) =====
+
+/**
+ * Comprueba si un email tiene formato válido (texto@texto.texto).
+ * @param {string} email
+ * @returns {boolean}
+ */
+function esEmailValido(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/**
+ * Marca un campo con error y Freya explica qué pasa.
+ * @param {HTMLInputElement} input Campo con el error.
+ * @param {string} mensaje Explicación para el usuario.
+ */
+function marcarError(input, mensaje) {
+    input.closest('.campo').classList.add('error');
+    input.focus();               // primero el foco (dispara la ayuda)...
+    state.decirFreya(mensaje);   // ...y después el error, que la sustituye
+}
+
+/**
+ * Quita las marcas de error de un formulario.
+ * @param {HTMLFormElement} form
+ */
+function limpiarErrores(form) {
+    form.querySelectorAll('.campo.error').forEach(c => c.classList.remove('error'));
+}
+
+// Freya habla al enfocar cualquier campo con data-ayuda
+// Botón «Ver»: enseña u oculta la contraseña
+document.querySelectorAll('.boton-ver').forEach(boton => {
+    boton.addEventListener('click', () => {
+        const input = boton.previousElementSibling; // el <input> de al lado
+        const mostrar = input.type === 'password';
+        input.type = mostrar ? 'text' : 'password';
+        boton.setAttribute('aria-pressed', mostrar);
+    });
+});
+
+document.querySelectorAll('[data-ayuda]').forEach(input => {
+    input.addEventListener('focus', () => state.decirFreya(input.dataset.ayuda, false));
+});
+
+// --- Login ---
+const formLogin = document.querySelector('#form-login');
+if (formLogin) {
+    formLogin.addEventListener('submit', (e) => {
+        e.preventDefault();
+        limpiarErrores(formLogin);
+
+        const email = formLogin.email.value.trim();
+        const password = formLogin.password.value;
+        const repetir = formRegistro.repetir.value;
+
+        if (!esEmailValido(email)) {
+            return marcarError(formLogin.email, 'Ese email no parece válido. Ejemplo: nombre@correo.com');
+        }
+        if (password === '') {
+            return marcarError(formLogin.password, 'Te falta la contraseña.');
+        }
+
+        state.decirFreya('¡Todo correcto! Entrando…');
+        // TODO(Sprint 3): POST /api/login.php (cuando tengamos API.md)
+    });
+}
+
+// --- Vincular pareja ---
+const formVincular = document.querySelector('#form-vincular');
+if (formVincular) {
+    formVincular.addEventListener('submit', (e) => {
+        e.preventDefault();
+        limpiarErrores(formVincular);
+
+        const codigo = formVincular.codigo.value.trim();
+
+        // 3 letras + 4 dígitos (TODO: confirmar con BE si las letras van siempre en mayúscula)
+        if (!/^[A-Za-z]{3}[0-9]{4}$/.test(codigo)) {
+            return marcarError(formVincular.codigo, 'El código son 3 letras y 4 números, por ejemplo ABC1234.');
+        }
+
+        state.decirFreya('¡Código correcto! Vinculando…');
+        // TODO(Sprint 3): POST /api/pareja_vincular.php (cuando tengamos API.md)
+    });
+}
