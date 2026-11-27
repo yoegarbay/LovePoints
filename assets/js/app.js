@@ -174,7 +174,25 @@ function limpiarErrores(form) {
     form.querySelectorAll('.campo.error').forEach(c => c.classList.remove('error'));
 }
 
-// Freya habla al enfocar cualquier campo con data-ayuda
+/**
+ * Envía un formulario a un endpoint del BE (POST) y devuelve su respuesta JSON.
+ * Si no hay conexión o la respuesta no es JSON, devuelve un error claro.
+ * @param {string} endpoint Nombre del archivo, p. ej. 'login.php'.
+ * @param {HTMLFormElement} form Formulario con los campos (se usan sus name).
+ * @returns {Promise<Object>}
+ */
+async function enviarApi(endpoint, form) {
+    try {
+        const respuesta = await fetch('api/' + endpoint, {
+            method: 'POST',
+            body: new FormData(form)
+        });
+        return await respuesta.json();
+    } catch (e) {
+        return { ok: false, error: 'No puedo conectar con el servidor. Inténtalo en un rato.' };
+    }
+}
+
 // Botón «Ver»: enseña u oculta la contraseña
 document.querySelectorAll('.boton-ver').forEach(boton => {
     boton.addEventListener('click', () => {
@@ -185,6 +203,7 @@ document.querySelectorAll('.boton-ver').forEach(boton => {
     });
 });
 
+// Freya habla al enfocar cualquier campo con data-ayuda
 document.querySelectorAll('[data-ayuda]').forEach(input => {
     input.addEventListener('focus', () => state.decirFreya(input.dataset.ayuda, false));
 });
@@ -192,13 +211,12 @@ document.querySelectorAll('[data-ayuda]').forEach(input => {
 // --- Login ---
 const formLogin = document.querySelector('#form-login');
 if (formLogin) {
-    formLogin.addEventListener('submit', (e) => {
+    formLogin.addEventListener('submit', async (e) => {
         e.preventDefault();
         limpiarErrores(formLogin);
 
         const email = formLogin.email.value.trim();
         const password = formLogin.password.value;
-        const repetir = formRegistro.repetir.value;
 
         if (!esEmailValido(email)) {
             return marcarError(formLogin.email, 'Ese email no parece válido. Ejemplo: nombre@correo.com');
@@ -208,7 +226,45 @@ if (formLogin) {
         }
 
         state.decirFreya('¡Todo correcto! Entrando…');
-        // TODO(Sprint 3): POST /api/login.php (cuando tengamos API.md)
+        const datos = await enviarApi('login.php', formLogin);
+
+        if (!datos.ok) {
+            return state.decirFreya(datos.error);
+        }
+        window.location.href = datos.tiene_pareja ? 'app.php' : 'vincular.php';
+    });
+}
+
+// --- Registro ---
+const formRegistro = document.querySelector('#form-registro');
+if (formRegistro) {
+    formRegistro.addEventListener('submit', (e) => {
+        e.preventDefault();
+        limpiarErrores(formRegistro);
+
+        const nombre = formRegistro.nombre.value.trim();
+        const email = formRegistro.email.value.trim();
+        const password = formRegistro.password.value;
+        const repetir = formRegistro.repetir.value;
+
+        if (nombre === '') {
+            return marcarError(formRegistro.nombre, 'Dime cómo te llamas.');
+        }
+        if (!esEmailValido(email)) {
+            return marcarError(formRegistro.email, 'Ese email no parece válido. Ejemplo: nombre@correo.com');
+        }
+        if (password.length < 4) {
+            return marcarError(formRegistro.password, 'La contraseña es muy corta: mínimo 4 caracteres.');
+        }
+        if (!/[A-Z]/.test(password)) {
+            return marcarError(formRegistro.password, 'A la contraseña le falta al menos 1 mayúscula.');
+        }
+        if (repetir !== password) {
+            return marcarError(formRegistro.repetir, 'Las contraseñas no coinciden.');
+        }
+
+        state.decirFreya('¡Todo correcto! Creando tu cuenta…');
+        // TODO(Sprint 3): POST /api/register.php (cuando el BE confirme los campos)
     });
 }
 
