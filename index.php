@@ -13,7 +13,6 @@ $descripcion  = 'Registrad los eventos de pareja, mirad los saldos de los dos y 
 
 $url_login    = 'login.php';
 $url_registro = 'registro.php';
-$url_cookies  = 'cookies.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
